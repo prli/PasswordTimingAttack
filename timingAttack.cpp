@@ -18,8 +18,6 @@ static __inline__ uint64_t rdtsc()
 	return ((uint64_t)lo) | (((uint64_t)hi) << 32);
 }
 
-string m_pswd;
-
 struct letterStats {
 	char letter;
 	uint64_t sum;
@@ -35,10 +33,13 @@ int main()
 {
 	bool isSuccess = false;
 	
-	cout << "Please enter password: " << endl;
-	getline(cin, m_pswd);
-	
 	string pwd_correct = "";
+	
+	for(int x = 0; x < 10000; x++)
+	{
+		//const char *c = &letters[x%26];
+		password_ok ("test");
+	}
 	while(!isSuccess)
 	{
 		string N_max_string;
@@ -47,6 +48,7 @@ int main()
 		int N_max;
 		std::istringstream(N_max_string) >> N_max;
 		char letters[26] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+		std::random_shuffle(letters, letters+26);
 		
 		//setup map
 		std::map<char,letterStats> charMap;
@@ -64,22 +66,19 @@ int main()
 			charMap.insert ( std::pair<char,letterStats>(letters[i], stat));
 		}
 		
-		//warmup
-		std::random_shuffle(letters, letters+26);
-		for(int x = 0; x < 1000; x++)
-		{
-			for(int i = 0; i < 26; i++)
-			{
-				password_ok (pwd_correct + letters[i]);
-			}
-		}
-		
 		uint64_t start = 0;
 		uint64_t end = 0;
-		
+
 		for(int n = 0; n < N_max; n++)
 		{
 			std::random_shuffle(letters, letters+26);
+			//warmup
+			for(int x = 0; x < 100; x++)
+			{
+				password_ok ("warmuptest");
+			}
+
+			//measure time
 			for(int i = 0; i < 26; i++)
 			{
 				string psw_attempt = pwd_correct + letters[i];
@@ -89,6 +88,8 @@ int main()
 				charMap[letters[i]].sum += end-start;
 				charMap[letters[i]].sqr += (end-start)*(end-start);
 			}
+			
+			//shows some progress
 			if(n%100000 == 0)
 			{
 				cout << ".";
@@ -119,6 +120,6 @@ int main()
 
 bool password_ok (const string & pwd)
 {    
-	return pwd == m_pswd;
+	return pwd == "haha";
 }
 
